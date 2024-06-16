@@ -20,9 +20,13 @@ def load_cached_data(filename):
 
 # Function to fetch orders for each item and filter by user status "ingame" and order type "sell"
 def fetch_item_orders(url_name):
+    formatted_url_name = url_name.lower().replace(' ', '_').replace('prime_set', 'prime_set')  # Adjust if necessary
+    
     with open("urls.txt", 'a') as urlsF:
-        urlsF.write(url_name + '\n')
-    response = requests.get(f"{API_BASE_URL}/items/{url_name}/orders")
+        urlsF.write(formatted_url_name + '\n')
+
+    response = requests.get(f"{API_BASE_URL}/items/{formatted_url_name}/orders")
+    
     if response.status_code == 200:
         data = response.json()
         filtered_orders = [order for order in data['payload']['orders'] if order['user']['status'] == 'ingame' and order['order_type'] == 'sell']
@@ -30,6 +34,7 @@ def fetch_item_orders(url_name):
     else:
         print(f"Failed to fetch orders for {url_name}. Status code: {response.status_code}")
         return None
+
 
 # Function to sort orders by price and get the three cheapest
 def get_cheapest_orders(orders, num_orders=3):
@@ -70,6 +75,7 @@ if len(sys.argv) == 2:
                         tmpint += 1
                         f0.write(item.item_name + '\n')
                         f0.write(item.url_name + '\n')  # Write url_name directly
+                        f0.write(item.id + '\n')
                         print(item.item_name)
         print(f"All prime warframes ({tmpint}) should be up to date\nThe tool is now ready")
         print("Exiting... Run again without 'update' to use")
@@ -92,15 +98,14 @@ with open('2.txt', 'w') as f2:
         f2.write(item.id + '\n')
 
 # Load cached data
-time.sleep(1)
 cached_items = load_cached_data('cache.txt')
 
 # Dictionary to store cheapest orders for each item
 cheapest_orders_dict = {}
 
 # Fetch orders for each cached item and store the three cheapest orders
-for item_name, url_name in cached_items:  # Adjusted unpacking to item_name, url_name only
-    orders = fetch_item_orders(url_name)
+for item_name, url_name in cached_items:
+    orders = fetch_item_orders(url_name)  # Pass only url_name to fetch_item_orders
     time.sleep(0.34)
     if orders:
         cheapest_orders = get_cheapest_orders(orders)
@@ -112,6 +117,7 @@ for item_name, url_name in cached_items:  # Adjusted unpacking to item_name, url
                 'second_cheapest_platinum': cheapest_orders[1]['platinum'] if len(cheapest_orders) > 1 else None,
                 'third_cheapest_platinum': cheapest_orders[2]['platinum'] if len(cheapest_orders) > 2 else None
             }
+
 # make tuple array that stores the frame name and cheapest sell offer
 list_of_cheapest_offers = []
 
