@@ -66,22 +66,22 @@ if len(sys.argv) == 2:
     if sys.argv[1] == "update":
         tmpint = 0
         print("Updating prime warframes database")
-        with open('cacheweps.txt', 'w') as f0:
+        with open('cache.txt', 'w') as f0:
             for item in items_list:
                 if item.id in ids_set and "Set" in item.item_name:
                     tmpitem = wm.items.get_item(item.url_name)
                     time.sleep(0.34)
-                    if "weapon" in tmpitem[0].tags:
+                    if "warframe" in tmpitem[0].tags:
                         tmpint += 1
                         f0.write(item.item_name + '\n')
                         f0.write(item.url_name + '\n')  # Write url_name directly
                         f0.write(item.id + '\n')
                         print(item.item_name)
-        print(f"All prime weapons ({tmpint}) should be up to date\nThe tool is now ready")
+        print(f"All prime warframes ({tmpint}) should be up to date\nThe tool is now ready")
         print("Exiting... Run again without 'update' to use")
         exit(0)
 
-cache_path = 'cacheweps.txt'
+cache_path = 'cache.txt'
 if not os.path.exists(cache_path):
     print(f"The file '{cache_path}' does not exist.")
     print(f"Run the tool with 'python {sys.argv[0]} update' at least once, and every\ntime Warframe gets a new prime warframe")
@@ -98,7 +98,7 @@ with open('2.txt', 'w') as f2:
         f2.write(item.id + '\n')
 
 # Load cached data
-cached_items = load_cached_data('cacheweps.txt')
+cached_items = load_cached_data('cache.txt')
 
 # Dictionary to store cheapest orders for each item
 cheapest_orders_dict = {}
@@ -137,9 +137,9 @@ for item_name, orders_info in cheapest_orders_dict.items():
 
     print("=" * 30)
 
-# Write list_of_cheapest_offers to weapons.txt
+# Write list_of_cheapest_offers to frames.txt
 list_of_cheapest_offers.sort(key=lambda x: x[1], reverse=True)
-with open("weapons.txt", 'w') as tupleF:
+with open("frames.txt", 'w') as tupleF:
     for item in list_of_cheapest_offers:
         tupleF.write(f"{item}\n")
 
@@ -148,5 +148,5 @@ print("=" * 30)
 print("=" * 30)
 print("Done processing")
 print("This program has outputted each prime frame set, with the 3 cheapest sell orders")
-print("CHECK 'weapons.txt' FOR THE SORTED PRIME FRAME SET PRICES")
-print("Keep in mind that the 'weapons.txt' file only contains the cheapest price\nwhich could be a troll, be sure to double check prices on wfm")
+print("CHECK 'frames.txt' FOR THE SORTED PRIME FRAME SET PRICES")
+print("Keep in mind that the 'frames.txt' file only contains the cheapest price\nwhich could be a troll, be sure to double check prices on wfm")
